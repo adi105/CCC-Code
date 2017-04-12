@@ -8,7 +8,7 @@
 //**************************************************************************************************
 #include <iostream>
 #include "linkedList.h"
-#include "linkedList.cpp"
+#include "Student.h"
 using namespace std;
 
 int main() {
@@ -55,6 +55,27 @@ int main() {
 
 	// test it on Students ------------------------------------
 	// Add code here that tests it on Student objects
+	Student student1("Bob", '4');
+	Student student2("Charlie", '3');
+	Student student3("Fred Meyer", '2');
+
+	//test append and prepend
+	UnOrderedList<Student> stuList;
+	stuList.append(student1);
+	stuList.append(student2);
+	stuList.prepend(student3);
+	stuList.print();
+
+	//test find
+	cout << "Bob is in slot " << stuList.find(student1) << endl;
+
+	//test remove
+	stuList.remove(student2);
+	stuList.remove(student1);
+	stuList.print();
+
+	stuList.removeAll();
+	stuList.print();
 
 	return 1;
 }

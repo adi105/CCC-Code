@@ -17,7 +17,7 @@ int main() {
 	LL->insert("Bob");
 	LL->insert("George");
 	LL->insert("Fred");
-	
+
 	LL->insert("Bob");
 	LL->insert("Bob");
 	LL->insert("George");
@@ -28,7 +28,10 @@ int main() {
 	cout << "George is present " << LL->find("George") << " times." << endl;
 	cout << "Fred is present " << LL->find("Fred") << " times." << endl;
 
-	cout << "The letter 'o' is present " << LL->findLetter('a') << " times." << endl;
-	
+	cout << "The letter 'o' is present " << LL->findLetter('o') << " times." << endl;
+	cout << "The letter 'a' is present " << LL->findLetter('a') << " times." << endl;
+	cout << "The letter 'e' is present " << LL->findLetter('e') << " times." << endl;
+	cout << "The letter 'g' is present " << LL->findLetter('g') << " times." << endl;
+
 	return 0;
 }

@@ -18,7 +18,7 @@ stringList::stringList() {
 
 //==================================================
 stringList::~stringList() {
-	
+
 }
 
 //==================================================
@@ -88,7 +88,7 @@ void stringList::printForward() const {
 	while (current != NULL) {
 		if (current->next != NULL) {
 			std::cout << current->data << ", ";
-			current = current->next;	
+			current = current->next;
 		}
 
 		else {
@@ -105,7 +105,7 @@ int stringList::remove(std::string item) {
 	//special case for empty list
 	if (head == NULL)
 		return 0;
-	
+
 	Node* current = head;
 	Node* nextNode = NULL;
 	Node* prevNode = NULL;
@@ -129,7 +129,7 @@ int stringList::remove(std::string item) {
 			current = head;
 			prevNode = current->prev;
 		}
-		
+
 		//if we are dealing with a list with only the deleting item
 		else if (current->data == item && current->prev == NULL && itemsInList == 1) {
 			delete current;
@@ -248,6 +248,25 @@ int stringList::findLetter(char letter) const {
 
 //===================================================
 int stringList::findLetterRecursion(char letter, Node* node) const {
+	//handle case insensitive
+	int ascii = letter;
+	int newAscii;
+	char newItem;
+
+	//change the ascii value of the new item
+	//depending if the char is uppercase or lowercase
+	if (ascii > 96) {
+		newAscii = ascii - 32;
+		newItem = newAscii;
+	}
+
+	if (ascii < 96) {
+		newAscii = ascii + 32;
+		newItem = newAscii;
+	}
+
+	//================================================
+
 	int charCount = 0;
 	//base case
 	if (node == NULL) {
@@ -255,8 +274,10 @@ int stringList::findLetterRecursion(char letter, Node* node) const {
 	}
 
 	//normal case
-	if (node->data.find(letter) != std::string::npos) {
-		return findLetterRecursion(letter, node->next) + 1;
+	for (int x = 0; x < (node->data.length()); x++) {
+		if (node->data[x] == letter || node->data[x] == newItem)
+			charCount++;
 	}
 
+	return findLetterRecursion(letter, node->next) + charCount;
 }

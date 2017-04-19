@@ -49,12 +49,17 @@ public:
 	//prints the list in reverse order
 	void printReverse() const;
 
-	//counts and returns how many times the given string occurred
-	//int find(std::string item) const;
+	//counts and returns how many times the given string occurred using recursion
+	//makes a call to the recursive function to access the head of the list
+	int find(std::string item) const;
+
+	int recursiveFind(Node* node, std::string item) const;
 
 	//counts and returns how many times the given char
 	//is present inside of the list
-	//int findLetter(char item) const;
+	int findLetter(char item) const;
+
+	int findLetterRecursion(char letter, Node* node) const;
 
 private:
 	Node* head;

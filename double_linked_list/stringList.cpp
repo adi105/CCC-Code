@@ -33,6 +33,7 @@ bool stringList::insert(const std::string item) {
 	if (head == NULL) {
 		head = nodeToInsert;
 		tail = nodeToInsert;
+		itemsInList++;
 		return true;
 	}
 
@@ -41,6 +42,7 @@ bool stringList::insert(const std::string item) {
 		nodeToInsert->next = head;
 		head = nodeToInsert;
 		nodeToInsert->next->prev = nodeToInsert;
+		itemsInList++;
 		return true;
 	}
 
@@ -49,6 +51,7 @@ bool stringList::insert(const std::string item) {
 		nodeToInsert->prev = tail;
 		nodeToInsert->prev->next = nodeToInsert;
 		tail = nodeToInsert;
+		itemsInList++;
 		return true;
 	}
 
@@ -61,6 +64,7 @@ bool stringList::insert(const std::string item) {
 	nodeToInsert->prev = curr->prev;
 	nodeToInsert->next = curr;
 	curr->prev = nodeToInsert;
+	itemsInList++;
 	return true;
 }
 
@@ -126,7 +130,7 @@ int stringList::remove(std::string item) {
 			prevNode = current->prev;
 		}
 		
-		//if we are dealing with an empty list
+		//if we are dealing with a list with only the deleting item
 		else if (current->data == item && current->prev == NULL && itemsInList == 1) {
 			delete current;
 
@@ -213,4 +217,46 @@ void stringList::printReverse() const {
 		}
 	}
 	std::cout << std::endl;
+}
+
+//===================================================
+int stringList::find(std::string item) const {
+	return recursiveFind(head, item);
+}
+
+//===================================================
+int stringList::recursiveFind(Node* node, std::string item) const {
+	//base case
+	if (node == NULL) {
+		return 0;
+	}
+
+	//normal case
+	else {
+		if (node->data == item)
+			return 1 + recursiveFind(node->next, item);
+
+		else
+			return recursiveFind(node->next, item);
+	}
+}
+
+//===================================================
+int stringList::findLetter(char letter) const {
+	return findLetterRecursion(letter, head);
+}
+
+//===================================================
+int stringList::findLetterRecursion(char letter, Node* node) const {
+	int charCount = 0;
+	//base case
+	if (node == NULL) {
+		return 0;
+	}
+
+	//normal case
+	if (node->data.find(letter) != std::string::npos) {
+		return findLetterRecursion(letter, node->next) + 1;
+	}
+
 }

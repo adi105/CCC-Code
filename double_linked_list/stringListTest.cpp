@@ -16,15 +16,19 @@ int main() {
 	stringList* LL = new stringList;
 	LL->insert("Bob");
 	LL->insert("George");
-	LL->printForward();
 	LL->insert("Fred");
-	LL->insert("Alfred");
+	
+	LL->insert("Bob");
+	LL->insert("Bob");
+	LL->insert("George");
+	LL->insert("George");
 	LL->printForward();
 
-	cout << LL->remove("Fred") << endl;
+	cout << "Bob is present " << LL->find("Bob") << " times." << endl;
+	cout << "George is present " << LL->find("George") << " times." << endl;
+	cout << "Fred is present " << LL->find("Fred") << " times." << endl;
 
-	LL->printForward();
-	LL->printReverse();
-
+	cout << "The letter 'o' is present " << LL->findLetter('a') << " times." << endl;
+	
 	return 0;
 }

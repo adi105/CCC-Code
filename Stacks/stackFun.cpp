@@ -11,7 +11,6 @@
 #include <stack>
 #include <string>
 #include <cctype>
-#include <iomanip>
 using namespace std;
 
 //prototypes
@@ -20,17 +19,24 @@ string stripWhiteSpace(string infix);
 bool isValid(string infix);
 bool isOperator(char letter);
 string convertPostfix(string infix);
-bool evaluate(string postfix);
+bool evaluate(string postfix, int& result);
 int operatorWeight(char op);
 bool hasHigherPrecedence(char op1, char op2);
 
 int main() {
 	cout << "Author: Adrian Bernat" << endl << endl;
-	
+
 	calculator("5 # 2");
-	
+
 	calculator("5 * - 6 8");
 
+	calculator("5*2   +  3");
+
+	calculator("3 + 5 * (7-2)");
+
+	calculator("3 + ( (8-5) * (4+9) )");
+
+	calculator("6 / 3");
 
 	return 0;
 }
@@ -46,12 +52,18 @@ string stripWhiteSpace(string infix) {
 	return newString;
 }
 
+//checks if the string contains any invalid characters,
+//i.e. anything other than a digit and an operator.
+//returns true if valid, false if invalid
 //=======================================================
 bool isValid(string infix) {
+	//test for empty string
+	if (infix == "")
+		return false;
 	for (int index = 0; index < infix.length(); index++) {
 		if (isdigit(infix.at(index)) == 0) {
 			if (!isOperator(infix.at(index))) {
-				cout << "INFIX:\tERROR: " << infix.at(index) << " is not a valid character." << endl;
+				cout << "INFIX:\tERROR: " << infix.at(index) << " is not a valid character." << endl << endl;
 				return false;
 			}
 		}
@@ -60,6 +72,8 @@ bool isValid(string infix) {
 	return true;
 }
 
+//converts the given infix string to postfix by using
+//a stack and string
 //=======================================================
 string convertPostfix(string infix) {
 	string postFix;
@@ -86,7 +100,7 @@ string convertPostfix(string infix) {
 				numStack.push(infix.at(index));
 		}
 		else if (infix.at(index) == ')') {
-			while (!numStack.empty() && numStack.top() != '(') {
+			while (numStack.empty() == false && numStack.top() != '(') {
 				postFix += numStack.top();
 				numStack.pop();
 			}
@@ -95,8 +109,13 @@ string convertPostfix(string infix) {
 	}
 
 	while (!numStack.empty()) {
-		postFix += numStack.top();
-		numStack.pop();
+		if (numStack.top() != '(' && numStack.top() != ')') {
+			postFix += numStack.top();
+			numStack.pop();
+		}
+		else {
+			numStack.pop();
+		}
 	}
 	return postFix;
 }
@@ -110,9 +129,11 @@ int operatorWeight(char op) {
 	case '+':
 	case '-':
 		weight = 1;
+		break;
 	case '*':
 	case '/':
 		weight = 2;
+		break;
 	}
 	return weight;
 }
@@ -141,7 +162,7 @@ bool evaluate(string postfix, int& result) {
 
 	//iterate through the string
 	for (int index = 0; index < postfix.length(); index++) {
-		//if the char is a digit
+		//if the char is an int
 		if (isdigit(postfix.at(index))) {
 			int operand = postfix.at(index) - '0';
 			calcStack.push(operand);
@@ -150,9 +171,14 @@ bool evaluate(string postfix, int& result) {
 			//store the previous two numbers in integers, to perform the operation
 			int num1 = calcStack.top();
 			calcStack.pop();
+			
+			//checks if the stack encounters an operator and does not have two integers inside of it
+			if (calcStack.empty())
+				return false;
+
 			int num2 = calcStack.top();
 			calcStack.pop();
-			
+
 			//switch statement to perform the given operation
 			switch (postfix.at(index)) {
 			case '+':
@@ -170,9 +196,11 @@ bool evaluate(string postfix, int& result) {
 			calcStack.push(result);
 		}
 	}
-	return result;
+	return true;
 }
 
+//tests if the given char is an operator for code brevity
+//========================================================
 bool isOperator(char letter) {
 	if (letter == ')' || letter == '(' || letter == '+' || letter == '-' || letter == '*' || letter == '/')
 		return true;
@@ -180,8 +208,12 @@ bool isOperator(char letter) {
 		return false;
 }
 
-void calculator(string infix) { //CLIMITS LIBRARY, MAX INT, MAKE IT RETURN THIS IF IT GETS AN ERROR, AND IF SO, COUT ERROR
+//this contains the main sequence of converting to postfix, then to infix,
+//then calculating the results.
+//=================================================================
+void calculator(string infix) {
 	string postFix;
+	int total = 0;
 
 	cout << "Processing " << infix << endl;
 
@@ -196,5 +228,8 @@ void calculator(string infix) { //CLIMITS LIBRARY, MAX INT, MAKE IT RETURN THIS 
 	postFix = convertPostfix(noWhiteSpace);
 	cout << "POSTFIX:" << postFix << endl;
 
-	cout << "TOTAL:\t" << evaluate(postFix) << endl;
+	if (evaluate(postFix, total))
+		cout << "TOTAL:\t" << total << endl << endl;
+	else
+		cout << "TOTAL:\tERROR" << endl << endl;
 }

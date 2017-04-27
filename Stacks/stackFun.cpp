@@ -11,32 +11,26 @@
 #include <stack>
 #include <string>
 #include <cctype>
+#include <iomanip>
 using namespace std;
 
 //prototypes
+void calculator(string infix);
 string stripWhiteSpace(string infix);
 bool isValid(string infix);
+bool isOperator(char letter);
 string convertPostfix(string infix);
-void evaluate();
-int operatorWeight(string op);
+bool evaluate(string postfix);
+int operatorWeight(char op);
 bool hasHigherPrecedence(char op1, char op2);
 
 int main() {
-	string infix = "5 * - 6 8";
-	string postFix;
-
 	cout << "Author: Adrian Bernat" << endl << endl;
-	cout << "Processing " << infix << endl;
+	
+	calculator("5 # 2");
+	
+	calculator("5 * - 6 8");
 
-	//strip the white space from the input
-	string noWhiteSpace = stripWhiteSpace(infix);
-
-	//validate the whitespace
-	isValid(noWhiteSpace);
-
-	//convert to postfix
-	postFix = convertPostfix(noWhiteSpace);
-	cout << postFix << endl;
 
 	return 0;
 }
@@ -44,11 +38,11 @@ int main() {
 //=======================================================
 string stripWhiteSpace(string infix) {
 	string newString;
-	
+
 	//strips all of the whitespace from a string
 	while (infix.find(' ') != infix.npos)
 		newString = infix.erase(infix.find(' '), 1);
-	
+
 	return newString;
 }
 
@@ -56,7 +50,7 @@ string stripWhiteSpace(string infix) {
 bool isValid(string infix) {
 	for (int index = 0; index < infix.length(); index++) {
 		if (isdigit(infix.at(index)) == 0) {
-			if (infix.at(index) != ')' && infix.at(index) != '(' && infix.at(index) != '+' && infix.at(index) != '-' && infix.at(index) != '*' && infix.at(index) != '/') {
+			if (!isOperator(infix.at(index))) {
 				cout << "INFIX:\tERROR: " << infix.at(index) << " is not a valid character." << endl;
 				return false;
 			}
@@ -82,7 +76,7 @@ string convertPostfix(string infix) {
 
 		else if (infix.at(index) == '+' || infix.at(index) == '-' || infix.at(index) == '*' || infix.at(index) == '/') {
 			if (!numStack.empty()) {
-				while (hasHigherPrecedence(numStack.top(), infix.at(index))) {
+				while (!numStack.empty() && (hasHigherPrecedence(numStack.top(), infix.at(index)))) {
 					postFix += numStack.top();
 					numStack.pop();
 				}
@@ -94,7 +88,7 @@ string convertPostfix(string infix) {
 		else if (infix.at(index) == ')') {
 			while (!numStack.empty() && numStack.top() != '(') {
 				postFix += numStack.top();
-				numStack.pop();	
+				numStack.pop();
 			}
 			numStack.pop();
 		}
@@ -137,4 +131,70 @@ bool hasHigherPrecedence(char op1, char op2) {
 		return true;
 
 	return op1Weight > op2Weight ? true : false;
+}
+
+//function that evaluates the postix string and returns the
+//result of the calculation
+//==========================================================
+bool evaluate(string postfix, int& result) {
+	stack<int> calcStack;
+
+	//iterate through the string
+	for (int index = 0; index < postfix.length(); index++) {
+		//if the char is a digit
+		if (isdigit(postfix.at(index))) {
+			int operand = postfix.at(index) - '0';
+			calcStack.push(operand);
+		}
+		else {
+			//store the previous two numbers in integers, to perform the operation
+			int num1 = calcStack.top();
+			calcStack.pop();
+			int num2 = calcStack.top();
+			calcStack.pop();
+			
+			//switch statement to perform the given operation
+			switch (postfix.at(index)) {
+			case '+':
+				result = (num1 + num2);
+				break;
+			case '-':
+				result = (num2 - num1);
+				break;
+			case '*':
+				result = (num1 * num2);
+				break;
+			case '/':
+				result = (num2 / num1);
+			}
+			calcStack.push(result);
+		}
+	}
+	return result;
+}
+
+bool isOperator(char letter) {
+	if (letter == ')' || letter == '(' || letter == '+' || letter == '-' || letter == '*' || letter == '/')
+		return true;
+	else
+		return false;
+}
+
+void calculator(string infix) { //CLIMITS LIBRARY, MAX INT, MAKE IT RETURN THIS IF IT GETS AN ERROR, AND IF SO, COUT ERROR
+	string postFix;
+
+	cout << "Processing " << infix << endl;
+
+	//strip the white space from the input
+	string noWhiteSpace = stripWhiteSpace(infix);
+
+	//validate the whitespace
+	if (!isValid(noWhiteSpace))
+		return;
+
+	//convert to postfix
+	postFix = convertPostfix(noWhiteSpace);
+	cout << "POSTFIX:" << postFix << endl;
+
+	cout << "TOTAL:\t" << evaluate(postFix) << endl;
 }

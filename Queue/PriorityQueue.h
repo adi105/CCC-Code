@@ -9,7 +9,11 @@
 //*******************************************************************************
 #include <queue>
 
-struct data {
+const int TIME_SLICE = 20;
+const int DATA_SIZE = 20;
+const int MAX_ITEMS = 100;
+
+struct dataStruct {
 	int PID;
 	int timeTotal;
 	int timeEnded;
@@ -20,12 +24,16 @@ struct data {
 
 class PriorityQueue {
 public:
-	
 	//inserts the given data into the queue based on its priority
-	bool enQueue(int data, int priority);
+	void prioritySimulation(dataStruct printArray[MAX_ITEMS]);
+	
+	void addDataStruct(dataStruct data);
+	
+	void printSim(dataStruct printArray[], int size);
 
 
 
 private:
-	std::queue<data> Q[5];
+	std::queue<dataStruct> priorityQ[5];
+
 };

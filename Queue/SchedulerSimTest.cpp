@@ -8,10 +8,15 @@
 //					with queues.
 //*******************************************************************************
 #include <iostream>
+#include "PriorityQueue.h"
+#include <fstream>
 using namespace std;
 
 int main() {
-	
+	PriorityQueue* priorityQ = new PriorityQueue;
+	ifstream fileData;
+	fileData.open("sim.data");
+
 
 	return 0;
 }

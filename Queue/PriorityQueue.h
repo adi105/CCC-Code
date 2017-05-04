@@ -9,13 +9,13 @@
 //*******************************************************************************
 #include <queue>
 
-const int TIME_SLICE = 20;
-const int DATA_SIZE = 20;
 const int MAX_ITEMS = 100;
+const int MAX_PRIORITY = 5;
+const int TIME_SLICE = 20;
 
 struct dataStruct {
 	int PID;
-	int timeTotal;
+	int timeNeeded;
 	int timeEnded;
 	int timeLeft;
 	int initialPriority;
@@ -24,16 +24,15 @@ struct dataStruct {
 
 class PriorityQueue {
 public:
+	//runs the simulation that tells how long the processes take to finish
+	void prioritySimulation(int size);
+
 	//inserts the given data into the queue based on its priority
-	void prioritySimulation(dataStruct printArray[MAX_ITEMS]);
-	
 	void addDataStruct(dataStruct data);
-	
+
+	//prints the data to the console
 	void printSim(dataStruct printArray[], int size);
 
-
-
 private:
-	std::queue<dataStruct> priorityQ[5];
-
+	std::queue<dataStruct> priorityQ[MAX_PRIORITY];
 };

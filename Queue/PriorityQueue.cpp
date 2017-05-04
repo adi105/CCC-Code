@@ -3,15 +3,19 @@
 // Developer:		Adrian Bernat
 // Course Number:	CS-260
 // Date:			4-30-17
-// IDE:				Visual Studio 2015
+// IDE:				Visual Studio TIME_SLICE15
 // Description:		Contains the implementation for the PriorityQueue class
 //*******************************************************************************
+#include <iostream>
 #include "PriorityQueue.h"
 
 //=====================================================
 void PriorityQueue::printSim(dataStruct printArray[], int size) {
-	for (int index = 0; )
-	return;
+	printf("%-15s %-15s %-15s %-15s %-15s %-15s \n", "ProcessID", "Priority(Init)", "Time Needed", "Time Started", "Time Ended", "Priority(Final)");
+
+	for (int index = 0; index < size; index++) {
+		printf("%-15d %-15d %-15d %-15d %-15d %-15d \n", printArray[index].PID + 1, printArray[index].initialPriority, printArray[index].timeNeeded, 0, printArray[index].timeEnded, printArray[index].finalPriority);
+	}
 }
 
 
@@ -21,103 +25,50 @@ void PriorityQueue::addDataStruct(dataStruct data) {
 }
 
 //======================================================
-void PriorityQueue::prioritySimulation(dataStruct printArray[MAX_ITEMS]) {
+void PriorityQueue::prioritySimulation(int size) {
 	int clock = 0;
+	dataStruct printArray[MAX_ITEMS];
 
-	//deal with top priority items
-	while (!priorityQ[0].empty()) {
-		dataStruct inputSim = priorityQ[0].front();
-		if (inputSim.timeLeft <= 20) {
-			clock += inputSim.timeLeft;
-			inputSim.timeLeft = 0;
-			inputSim.timeEnded = clock;
-			inputSim.finalPriority = 0;
-			priorityQ[0].pop();
-			printArray[inputSim.PID] = inputSim;
-		}
-		else {
-			clock += 20;
-			inputSim.timeLeft -= 20;
-			priorityQ[0].pop();
-			priorityQ[1].push(inputSim);
-		}
-	}
-
-	//the second priority
-	while (priorityQ[1].empty() != true) {
-		dataStruct inputSim = priorityQ[1].front();
-		if (inputSim.timeLeft <= 20) {
-			clock += inputSim.timeLeft;
-			inputSim.timeLeft = 0;
-			inputSim.timeEnded = clock;
-			inputSim.finalPriority = 1;
-			priorityQ[1].pop();
-			printArray[inputSim.PID] = inputSim;
-		}
-		else {
-			clock += 20;
-			inputSim.timeLeft -= 20;
-			priorityQ[1].pop();
-			priorityQ[2].push(inputSim);
-		}
-	}
-
-	//third priority items
-	while (priorityQ[2].empty() != true) {
-		dataStruct inputSim = priorityQ[2].front();
-		if (inputSim.timeLeft <= 20) {
-			clock += inputSim.timeLeft;
-			inputSim.timeLeft = 0;
-			inputSim.timeEnded = clock;
-			inputSim.finalPriority = 2;
-			priorityQ[2].pop();
-			printArray[inputSim.PID] = inputSim;
-		}
-		else {
-			clock += 20;
-			inputSim.timeLeft -= 20;
-			priorityQ[2].pop();
-			priorityQ[3].push(inputSim);
-		}
-	}
-	
-	//fourth priority items
-	while (priorityQ[3].empty() != true) {
-		dataStruct inputSim = priorityQ[3].front();
-		if (inputSim.timeLeft <= 20) {
-			clock += inputSim.timeLeft;
-			inputSim.timeLeft = 0;
-			inputSim.timeEnded = clock;
-			inputSim.finalPriority = 3;
-			priorityQ[3].pop();
-			printArray[inputSim.PID] = inputSim;
-		}
-		else {
-			clock += 20;
-			inputSim.timeLeft -= 20;
-			priorityQ[3].pop();
-			priorityQ[4].push(inputSim);
+	//deal with priorities up until the last, as they are identical
+	for (int index = 0; index < (MAX_PRIORITY - 1); index++) {
+		while (priorityQ[index].empty() != true) {
+			dataStruct inputSim = priorityQ[index].front();
+			if (inputSim.timeLeft <= TIME_SLICE) {
+				clock += inputSim.timeLeft;
+				inputSim.timeLeft = 0;
+				inputSim.timeEnded = clock;
+				inputSim.finalPriority = index;
+				priorityQ[index].pop();
+				printArray[inputSim.PID] = inputSim;
+			}
+			else {
+				clock += TIME_SLICE;
+				inputSim.timeLeft -= TIME_SLICE;
+				priorityQ[index].pop();
+				priorityQ[(index + 1)].push(inputSim);
+			}
 		}
 	}
 
 	//final priority level
-	while (priorityQ[4].empty() != true) { //least priority items
-		dataStruct inputSim = priorityQ[4].front();
-		if (inputSim.timeLeft <= 20) {
+	while (priorityQ[MAX_PRIORITY - 1].empty() != true) {
+		dataStruct inputSim = priorityQ[MAX_PRIORITY - 1].front();
+		if (inputSim.timeLeft <= TIME_SLICE) {
 			clock += inputSim.timeLeft;
 			inputSim.timeLeft = 0;
 			inputSim.timeEnded = clock;
 			inputSim.finalPriority = 4;
-			priorityQ[4].pop();
+			priorityQ[MAX_PRIORITY - 1].pop();
 			printArray[inputSim.PID] = inputSim;
 		}
 		else {
-			clock += 20;
-			inputSim.timeLeft -= 20;
-			priorityQ[4].pop();
+			clock += TIME_SLICE;
+			inputSim.timeLeft -= TIME_SLICE;
+			priorityQ[MAX_PRIORITY - 1].pop();
 			//we need to reroute items into the same queue until they are finished, as they all have the same priority
-			priorityQ[4].push(inputSim);
+			priorityQ[MAX_PRIORITY - 1].push(inputSim);
 		}
 	}
+	//print the sim results once the simulation is done
+	printSim(printArray, size);
 }
-

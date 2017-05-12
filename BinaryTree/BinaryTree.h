@@ -1,29 +1,43 @@
+//******************************************************************************
+// Program Name:	BinaryTree.h
+// Developer:		Adrian Bernat
+// Course Number:	CS-260
+// Date:			5-10-17
+// IDE:				Visual Studio 2015
+// Description:		Contains the code that creates a binary search tree class
+//					and declares all of the functions required
+//*******************************************************************************
 #pragma once
+#include <string>
 
-template <class dataType>
 struct Node {
-	dataType data;
+	std::string data;
 	Node* left;
 	Node* right;
 };
 
-template <class dataType>
 class BinaryTree {
 public:
 	//constructor
 	BinaryTree();
 
+	//mutator
+	bool insert(std::string data);
+
 	//accessor
 	void printInOrder();
 
+	void printPreorder();
+
+	void printPostorder();
+
+	void printInOrderRec(Node* node);
+
+	void printPreorderRec(Node* node);
+
+	void printPostorderRec(Node* node);
+
 private:
 	Node* root;
-	
-	//printing in postorder and preorder require access to the root
-	//therefore they are private functions
-	void printPreRec(Node* curr);
 
-	void printPostRec(Node* curr);
-
-	void printInOrderRec(Node* curr);
 };

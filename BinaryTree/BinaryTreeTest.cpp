@@ -41,12 +41,12 @@ int main() {
 	bTree.printInOrder();
 	cout << endl << endl;
 
-	cout << "Output in postorder:" << endl;
-	bTree.printPostorder();
-	cout << endl << endl;
+	//cout << "Output in postorder:" << endl;
+	//bTree.printPostorder();
+	//cout << endl << endl;
 
-	cout << "Output in preorder:" << endl;
-	bTree.printPreorder();
+	//cout << "Output in preorder:" << endl;
+	//bTree.printPreorder();
 	cout << endl << endl;
 
 	return 0;

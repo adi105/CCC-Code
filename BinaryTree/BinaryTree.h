@@ -24,6 +24,10 @@ public:
 	//mutator
 	bool insert(std::string data);
 
+	bool remove(std::string data);
+
+	void removeNode(Node* &nodeToDelete);
+
 	//accessor
 	void printInOrder();
 

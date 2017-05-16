@@ -14,6 +14,10 @@ BinaryTree::BinaryTree() {
 	root = NULL;
 }
 
+BinaryTree::~BinaryTree() {
+	clearTree();
+}
+
 //transverses the binary tree until it finds the place
 //for the data, then inserts the data and returns true
 //when finished
@@ -132,6 +136,36 @@ void BinaryTree::removeNode(Node* &nodeToDelete) {
 	}
 
 }
+
+//===========================================================
+bool BinaryTree::clearTree() {
+	if (root == NULL) {
+		return false;
+	}
+
+	else {
+		clearTreeRec(root);
+		return true;
+	}
+}
+
+//===========================================================
+void BinaryTree::clearTreeRec(Node* &current) {
+	//base case
+	if (current == NULL)
+		return;
+
+	//special case
+	clearTreeRec(current->left);
+	current->left = NULL;
+
+	clearTreeRec(current->right);
+	current->right = NULL;
+
+	delete current;
+	current = NULL;
+}
+
 //===========================================================
 void BinaryTree::printInOrder() {
 	printInOrderRec(root);

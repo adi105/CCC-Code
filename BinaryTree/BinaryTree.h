@@ -21,12 +21,19 @@ public:
 	//constructor
 	BinaryTree();
 
+	//destructor
+	~BinaryTree();
+
 	//mutator
 	bool insert(std::string data);
 
 	bool remove(std::string data);
 
 	void removeNode(Node* &nodeToDelete);
+
+	bool clearTree();
+
+	void clearTreeRec(Node* &current);
 
 	//accessor
 	void printInOrder();

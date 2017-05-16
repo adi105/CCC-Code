@@ -15,7 +15,7 @@
 using namespace std;
 
 int main() {
-	cout << "CS260 Assignment 5a -  bTreeary Trees, part 1" << endl;
+	cout << "CS260 Assignment 5a -  Binary Trees, part 1" << endl;
 
 	cout << "Author: Adrian Bernat" << endl;
 
@@ -40,6 +40,9 @@ int main() {
 	cout << "Output in order:" << endl;
 	bTree.printInOrder();
 	cout << endl << endl;
+
+	bTree.clearTree();
+	bTree.printInOrder();
 
 	//cout << "Output in postorder:" << endl;
 	//bTree.printPostorder();

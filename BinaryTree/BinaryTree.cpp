@@ -23,6 +23,10 @@ BinaryTree::~BinaryTree() {
 //when finished
 //==================================================
 bool BinaryTree::insert(std::string data) {
+	//make sure the string isnt empty
+	if (data.empty())
+		return false;
+
 	//create the new node
 	Node* newNode = new Node;
 	newNode->data = data;
@@ -81,7 +85,7 @@ bool BinaryTree::remove(std::string data) {
 
 	//after the item is found, we need to remove it
 	if (isFound) {
-		if (current == NULL)
+		if (current == root)
 			removeNode(root);
 		else if (data < parent->data)
 			removeNode(parent->left);
@@ -167,46 +171,81 @@ void BinaryTree::clearTreeRec(Node* &current) {
 }
 
 //===========================================================
-void BinaryTree::printInOrder() {
-	printInOrderRec(root);
+BinaryTree* BinaryTree::copyTree() {
+	BinaryTree *bTree2 = new BinaryTree;
+	copyTreeRec(bTree2->root, root);
+	return bTree2;
 }
 
 //===========================================================
-void BinaryTree::printInOrderRec(Node* node) {
-	if (node == NULL)
-		return;
+void BinaryTree::copyTreeRec(Node* &nodeCopy, Node* originalNode) {
+	//base case
+	if (originalNode == NULL)
+		nodeCopy = NULL;
 
-	printInOrderRec(node->left);
-	std::cout << node->data << " ";
-	printInOrderRec(node->right);
+	//general case
+	else {
+		nodeCopy = new Node;
+		nodeCopy->data = originalNode->data;
+		copyTreeRec(nodeCopy->left, originalNode->left);
+		copyTreeRec(nodeCopy->right, originalNode->right);
+	}
 }
 
 //===========================================================
-void BinaryTree::printPreorder() {
-	printPreorderRec(root);
+void BinaryTree::transverseInOrder(const std::function<void(std::string, int)> &funcToCall) {
+	transverseInOrderRec(root, funcToCall, 0);
+	std::cout << std::endl;
 }
 
 //===========================================================
-void BinaryTree::printPreorderRec(Node* node) {
-	if (node == NULL)
-		return;
+void BinaryTree::transverseInOrderRec(Node* currentNode, const std::function<void(std::string, int)> &funcToCall, int height) {
+	//base case
+	if (currentNode != NULL) {
+		transverseInOrderRec(currentNode->left, funcToCall, ++height);
+		funcToCall(currentNode->data, --height);
+		transverseInOrderRec(currentNode->right, funcToCall, ++height);
+	}
+	//general case
+	else {
+		--height;
+	}
+}
 
-	std::cout << node->data << " ";
-	printInOrderRec(node->left);
-	printInOrderRec(node->right);
+//===========================================================
+void BinaryTree::transversePreorder(const std::function<void(std::string, int)> &funcToCall) {
+	transversePreorderRec(root, funcToCall, 0);
+	std::cout << std::endl;
+}
+
+//===========================================================
+void BinaryTree::transversePreorderRec(Node* currentNode, const std::function<void(std::string, int)> &funcToCall, int height) {
+	int startingHeight = 0;
+	
+	if (currentNode != NULL) {
+		startingHeight = height;
+		funcToCall(currentNode->data, --height);
+		transversePreorderRec(currentNode->left, funcToCall, height);
+		height = startingHeight;
+		transversePreorderRec(currentNode->right, funcToCall, height);
+	}
 }
 
 //============================================================
-void BinaryTree::printPostorder() {
-	printPostorderRec(root);
+void BinaryTree::transversePostorder(const std::function<void(std::string, int)> &funcToCall) {
+	transversePostorderRec(root, funcToCall, 0);
+	std::cout << std::endl;
 }
 
 //============================================================
-void BinaryTree::printPostorderRec(Node* node) {
-	if (node == NULL)
-		return;
+void BinaryTree::transversePostorderRec(Node* currentNode, const std::function<void(std::string, int)> &funcToCall, int height) {
+	int startingHeight = 0;
 
-	printInOrderRec(node->left);
-	printInOrderRec(node->right);
-	std::cout << node->data << " ";
+	if (currentNode != NULL) {
+		startingHeight = height;
+		transversePostorderRec(currentNode->left, funcToCall, ++height);
+		height = startingHeight;
+		transversePostorderRec(currentNode->right, funcToCall, ++height);
+		funcToCall(currentNode->data, --height);
+	}
 }

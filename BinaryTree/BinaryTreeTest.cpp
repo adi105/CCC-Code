@@ -14,13 +14,19 @@
 
 using namespace std;
 
+//prototype
+void printNode(const string &data, int level);
+
 int main() {
-	cout << "CS260 Assignment 5a -  Binary Trees, part 1" << endl;
+	cout << "CS260 Assignment 5a -  Binary Trees" << endl;
 
 	cout << "Author: Adrian Bernat" << endl;
 
+	//declare a tree
 	BinaryTree bTree;
+	BinaryTree* bTree2;
 
+	//insert a few names
 	bTree.insert("Jynx");
 	bTree.insert("Charmander");
 	bTree.insert("Snorlax");
@@ -36,21 +42,58 @@ int main() {
 	bTree.insert("Bulbasaur");
 	bTree.insert("Abra");
 	cout << endl;
+	
+	//print in order
+	bTree.transverseInOrder(printNode);
+	cout << endl;
 
-	cout << "Output in order:" << endl;
-	bTree.printInOrder();
-	cout << endl << endl;
+	//make a deep copy
+	bTree2 = bTree.copyTree();
 
-	bTree.clearTree();
-	bTree.printInOrder();
+	//delete a few names
+	cout << "Deleting Squirtle..." << endl;
+	bTree.remove("Squirtle");
+	bTree.transverseInOrder(printNode);
+	cout << endl;
 
-	//cout << "Output in postorder:" << endl;
-	//bTree.printPostorder();
-	//cout << endl << endl;
+	cout << "Deleting Meowth..." << endl;
+	bTree.remove("Meowth");
+	bTree.transverseInOrder(printNode);
+	cout << endl;
 
-	//cout << "Output in preorder:" << endl;
-	//bTree.printPreorder();
-	cout << endl << endl;
+	cout << "Deleting Blastoise..." << endl;
+	bTree.remove("Blastoise");
+	bTree.transverseInOrder(printNode);
+	cout << endl;
 
+	cout << "Deleting Jynx..." << endl;
+	bTree.remove("Jynx");
+	bTree.transverseInOrder(printNode);
+	cout << endl;
+
+	//print the full copied tree contents
+	cout << "Copied tree's contents: \nInorder:" << endl;
+	bTree2->transverseInOrder(printNode);
+	cout << endl;
+
+	cout << "Postorder:" << endl;
+	bTree2->transversePostorder(printNode);
+	cout << endl;
+
+	cout << "Preorder:" << endl;
+	bTree2->transversePreorder(printNode);
+	cout << endl;
+
+	//remove all nodes from copy and print
+	bTree2->clearTree();
+	bTree2->transverseInOrder(printNode);
 	return 0;
 }
+
+void printNode(const string &data, int level) {
+	if (level < 0)
+		level = 0;
+
+	cout << data << "(" << level << ") ";
+}
+

@@ -8,7 +8,9 @@
 //					and declares all of the functions required
 //*******************************************************************************
 #pragma once
+#include <iostream>
 #include <string>
+#include <functional>
 
 struct Node {
 	std::string data;
@@ -31,24 +33,28 @@ public:
 
 	void removeNode(Node* &nodeToDelete);
 
+	BinaryTree* copyTree();
+
 	bool clearTree();
 
-	void clearTreeRec(Node* &current);
-
 	//accessor
-	void printInOrder();
+	void transverseInOrder(const std::function<void(std::string, int)> &funcToCall);
 
-	void printPreorder();
+	void transversePreorder(const std::function<void(std::string, int)> &funcToCall);
 
-	void printPostorder();
-
-	void printInOrderRec(Node* node);
-
-	void printPreorderRec(Node* node);
-
-	void printPostorderRec(Node* node);
+	void transversePostorder(const std::function<void(std::string, int)> &funcToCall);
 
 private:
 	Node* root;
+
+	void transverseInOrderRec(Node* currentNode, const std::function<void(std::string, int)> &funcToCall, int height);
+
+	void transversePreorderRec(Node* currentNode, const std::function<void(std::string, int)> &funcToCall, int height);
+
+	void transversePostorderRec(Node* currentNode, const std::function<void(std::string, int)> &funcToCall, int height);
+
+	void clearTreeRec(Node* &current);
+
+	void copyTreeRec(Node* &originalRoot, Node* otherTreeRoot);
 
 };

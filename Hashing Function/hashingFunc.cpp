@@ -24,7 +24,7 @@ ofstream fileWrite;
 
 //prototypes
 int hashFunc(string wordToHash);
-float findCollision(const int* arrayToSearch);
+float findCollision(const int* searchArray);
 void outputToFile(const int* arrayToOutput);
 string convertToLowercase(string wordToConvert);
 
@@ -35,14 +35,13 @@ int main() {
 	char wordFromLine[DATA_SIZE] = {};
 	string wordFromLineString = "";
 	int arrayIndex = 0;
-	int errorCount = 0;
-	
+
 	fileRead.open(FILE_TO_READ);
 
 	//check if it opened
 	if (!fileRead.is_open()) {
 		cout << "ERROR! Cannot open file." << endl;
-		return;
+		return -1;
 	}
 
 	else {
@@ -58,21 +57,28 @@ int main() {
 			arrayIndex = hashFunc(wordFromLineString) % NUMBER_OF_WORDS;
 			arrayIndex = abs(arrayIndex);
 
-			if (arrayIndex < 0 || arrayIndex >= NUMBER_OF_WORDS) {
-				cout << "ERROR! Index out of bounds" << endl;
-				errorCount++;
-				continue;
-			}
-
 			hashMap[arrayIndex]++;
 		}
 
 		fileRead.close();
 
-		cout << "CS-260: A6 Hashing, Adrian Bernat, " << findCollision(hashMap) << "% error " << errorCount << endl;
+		cout << "CS-260: A6 Hashing, Adrian Bernat, " << findCollision(hashMap) << endl;
 	}
 
 	return 0;
+}
+
+//========================================================================
+int hashFunc(string wordToHash) {
+	//declare the variable that will hold the hash value
+	int hash = 0;
+
+	for (int letter = 0; letter < wordToHash.size(); letter++) {
+		hash += static_cast<int>(wordToHash[letter]);
+		hash += static_cast<int>(wordToHash[(wordToHash.size() - 1)]);
+	}
+
+	return hash;
 }
 
 //========================================================================
@@ -89,3 +95,28 @@ string convertToLowercase(string wordToConvert) {
 }
 
 //=========================================================================
+float findCollision(const int* searchArray) {
+	float numberOfCollisions = 0;
+
+	for (int index = 0; index < NUMBER_OF_WORDS; index++) {
+		if (searchArray[index] > 1) {
+			numberOfCollisions += searchArray[index] - 1;
+		}
+	}
+
+	return (numberOfCollisions / NUMBER_OF_WORDS) * 100;
+}
+
+//=========================================================================
+void outputToFile(const int* arrayToOutput) {
+	fileWrite.open(FILE_TO_WRITE);
+
+	for (int index = 0; index < NUMBER_OF_WORDS - 1; index++) {
+		if (arrayToOutput[index] != 0) {
+			fileWrite << arrayToOutput[index] << ",";
+		}
+	}
+
+	fileWrite << arrayToOutput[NUMBER_OF_WORDS - 1];
+	fileWrite.close();
+}

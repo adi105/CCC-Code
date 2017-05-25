@@ -23,7 +23,7 @@ ifstream fileRead;
 ofstream fileWrite;
 
 //prototypes
-int hashFunc(string wordToHash);
+int hashFunc(string word);
 float findCollision(const int* searchArray);
 void outputToFile(const int* arrayToOutput);
 string convertToLowercase(string wordToConvert);
@@ -32,8 +32,6 @@ string convertToLowercase(string wordToConvert);
 int main() {
 	//declare variables
 	int hashMap[NUMBER_OF_WORDS] = {};
-	char wordFromLine[DATA_SIZE] = {};
-	string wordFromLineString = "";
 	int arrayIndex = 0;
 
 	fileRead.open(FILE_TO_READ);
@@ -45,55 +43,63 @@ int main() {
 	}
 
 	else {
+		string word;
 		//go through the file
-		while (!fileRead.eof()) {
-			fileRead.getline(wordFromLine, DATA_SIZE);
-
-			//convert to a string
-			wordFromLineString = wordFromLine;
-			wordFromLineString = convertToLowercase(wordFromLineString);
-
-			//calculate the index
-			arrayIndex = hashFunc(wordFromLineString) % NUMBER_OF_WORDS;
-			arrayIndex = abs(arrayIndex);
-
+		while (fileRead >> word) {
+			arrayIndex = hashFunc(word);
 			hashMap[arrayIndex]++;
 		}
 
 		fileRead.close();
 
 		cout << "CS-260: A6 Hashing, Adrian Bernat, " << findCollision(hashMap) << endl;
+		outputToFile(hashMap);
 	}
 
 	return 0;
 }
 
+//does the actual hashing of the word as to produce a hashed int, which when modded by the
+//total items, will produce the least collision rate
 //========================================================================
-int hashFunc(string wordToHash) {
-	//declare the variable that will hold the hash value
-	int hash = 0;
+int hashFunc(string word) {
+	int stringValue = 0; //this is the value of the string's letter's ascii values
+	int valueToMult = 397; //this value will hold the number as multiplication is done to it
+	int totalValue = 0; //this will hold the value of the string's ascii plus the valueToMult
+	int primeValue = 0; //this variable will store a prime number equation
+	int prime1 = 223;  
+	int prime2 = 405413; //these are two random prime numbers
 
-	for (int letter = 0; letter < wordToHash.size(); letter++) {
-		hash += static_cast<int>(wordToHash[letter]);
-		hash += static_cast<int>(wordToHash[(wordToHash.size() - 1)]);
+	for (int letter = 0; letter < word.length(); letter++) {
+		stringValue += word[letter];
+		valueToMult += word[0] * word[1] * word[2];
+		valueToMult = (valueToMult * prime1) * prime2;
+		valueToMult = ((valueToMult >> 3) + valueToMult + word[letter]);
+		valueToMult = ((valueToMult * word[word.length() / 2]) + (valueToMult * word[word.length() / 8]) * 780257) * 5;
+		primeValue = 780257 * (valueToMult << 5) * 3;
+		valueToMult = valueToMult * primeValue;
+		valueToMult = valueToMult + word[letter] / 75210;
+		valueToMult = valueToMult + (word[letter] / 2) + (word[letter / 7]);
+		totalValue = stringValue + valueToMult;
 	}
 
-	return hash;
+	int modValue = totalValue % NUMBER_OF_WORDS;
+	return abs(modValue);
 }
 
+//returns the string converted into all lowercase
 //========================================================================
 string convertToLowercase(string wordToConvert) {
 	for (int index = 0; index < wordToConvert.length(); index++) {
 		if (wordToConvert[index] >= 65 && wordToConvert[index] <= 90) {
 			wordToConvert[index] = tolower(wordToConvert[index]);
 		}
-		else {
-			continue;
-		}
 	}
+	
 	return wordToConvert;
 }
 
+//finds how many collisions there were in the array
 //=========================================================================
 float findCollision(const int* searchArray) {
 	float numberOfCollisions = 0;
@@ -113,10 +119,12 @@ void outputToFile(const int* arrayToOutput) {
 
 	for (int index = 0; index < NUMBER_OF_WORDS - 1; index++) {
 		if (arrayToOutput[index] != 0) {
-			fileWrite << arrayToOutput[index] << ",";
+			fileWrite << arrayToOutput[index] << "," << endl;
 		}
 	}
 
 	fileWrite << arrayToOutput[NUMBER_OF_WORDS - 1];
 	fileWrite.close();
 }
+
+

@@ -2,15 +2,7 @@
 
 //==================================================================================
 Sorter::Sorter() {
-	cout << "Setting up arrays..." << endl;
-
-	setupArrays(DS100->normal, DS100->reverse, DS100->random, DS100->ARRAY_SIZE);
-	setupArrays(DS1k->normal, DS1k->reverse, DS1k->random, DS1k->ARRAY_SIZE);
-	setupArrays(DS10k->normal, DS10k->reverse, DS10k->random, DS10k->ARRAY_SIZE);
-	setupArrays(DS100k->normal, DS100k->reverse, DS100k->random, DS100k->ARRAY_SIZE);
-	setupArrays(DS1m->normal, DS1m->reverse, DS1m->random, DS1m->ARRAY_SIZE);
-
-	cout << "Setup finished." << endl;
+	arr[MAX_SIZE] = { 0 };
 }
 
 //=======================================
@@ -18,46 +10,81 @@ Sorter::~Sorter() {
 
 }
 
+//=========================================================
+//Declare the static array outside of the header
+int Sorter::arr[MAX_SIZE] = { 0 };
+//=========================================================
+void Sorter::initialize(const int arraySize, bool reverse, bool random) {
+	if (reverse) {
+		for (int index = arraySize; index != 0; index--)
+			arr[index - 1] = arraySize - index;
+	}
+
+	else if (random) {
+		for (int index = 0; index < arraySize; index++) {
+			arr[index] = -1;
+		}
+
+		for (int index = 0; index < arraySize; index++) {
+			arr[index] = rand() % arraySize;
+		}
+	}
+
+	else {
+		int num = 0;
+		for (int index = 0; index < arraySize; index++) {
+			arr[index] = num;
+			num++;
+		}
+	}
+}
 //=======================================
 void Sorter::startSorting() {
 	cout << "Performing Bubble Sort on 100..." << endl;
-	bubbleSort(DS100->normal, DS100->reverse, DS100->random, DS100->ARRAY_SIZE);
+	doSort(bubbleNormalTime, bubbleReverseTime, bubbleRandomTime, 100, (*this.*&Sorter::bubbleSort)(arr, 100));
 
-	cout << "Normal time: " << DS100->timeToSortNormBubble << " seconds." << endl;
-	cout << "Reverse time: " << DS100->timeToSortRevBubble << " seconds." << endl;
-	cout << "Random time: " << DS100->timeToSortRandBubble << " seconds." << endl;
+	cout << "Normal time: " << bubbleNormalTime << " seconds." << endl;
+	cout << "Reverse time: " << bubbleReverseTime << " seconds." << endl;
+	cout << "Random time: " << bubbleRandomTime << " seconds." << endl << endl;
+
+	//=========================================================================
 }
 
-//===========================================
-void Sorter::setupArrays(int normal[], int reverse[], int random[], const int ARRAY_SIZE) {
-	int slotsFilled = 0;
-	int indexToFill = 0;
+//==========================================================================================================================================
+void Sorter::doSort(float normalTime, float reverseTime, float randomTime, int arraySize, const function<void(int[], int)> &funcToCall) {
+	initialize(100, false, false);
+	clockTime = clock();
+	funcToCall(arr, arraySize);
+	normalTime = static_cast<float>(clock() - clockTime) / CLOCKS_PER_SEC;
 
-	srand(42);
+	initialize(100, true, false);
+	clockTime = clock();
+	funcToCall(arr, arraySize);
+	reverseTime = static_cast<float>(clock() - clockTime) / CLOCKS_PER_SEC;
 
-	cout << ARRAY_SIZE << "...";
-
-	//normal order
-	for (int index = 0; index < ARRAY_SIZE; index++) {
-		normal[index] = index;
-	}
-
-	//reverse order
-	for (int index = ARRAY_SIZE; index != 0; index--) {
-		reverse[index - 1] = ARRAY_SIZE - index;
-	}
-	
-	//random order
-	
-	//setting the array to equal -1
-	//makes sure we dont fill any slots twice
-	for (int index = 0; index < ARRAY_SIZE; index++)
-		random[index] = -1;
-
-	for (int index = 0; index < ARRAY_SIZE; index++) {
-		random[index] = rand() % ARRAY_SIZE;
-	}
-
-	cout << "Setup is done..." << endl;
+	initialize(100, false, true);
+	clockTime = clock();
+	funcToCall(arr, arraySize);
+	reverseTime = static_cast<float>(clock() - clockTime) / CLOCKS_PER_SEC;
 }
 
+//===========================================================================
+void Sorter::bubbleSort(int arr[], int arraySize) {
+	int index1;
+	bool isSorted = false;
+
+	while (isSorted == false) {
+		isSorted = true;
+
+		for (int index = 0; index < arraySize; index++) {
+			if (arr[index] > arr[index + 1]) {
+				isSorted = false;
+				index1 = arr[index];
+				arr[index] = arr[index + 1];
+				arr[index + 1] = index1;
+			}
+		}
+	}
+}
+
+//===============================================================================
